@@ -1,8 +1,12 @@
 param location string = resourceGroup().location
 param logAnalyticsWorkspaceName string
-param applicationInsightsName string
 param appServicePlanName string
 param webAppName string
+param apimName string
+param apimTier string = 'Developer'
+param apimCapacity int = 1
+param apimOrganizationName string
+param apimAdminEmail string
 
 var deploymentSlotName = 'staging'
 
@@ -96,8 +100,8 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
   properties: {}
 }
 
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
+resource webAppInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: webAppName
   location: location
   kind: 'web'
   properties: {
@@ -110,7 +114,7 @@ resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
   name: 'appsettings'
   parent: webApp
   properties: {
-    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString
+    APPLICATIONINSIGHTS_CONNECTION_STRING: webAppInsights.properties.ConnectionString
     ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
     XDT_MicrosoftApplicationInsights_Mode: 'Recommended'
     WEBSITE_RUN_FROM_PACKAGE: '1'
@@ -129,8 +133,8 @@ resource slotConfigNames 'Microsoft.Web/sites/config@2022-09-01' = {
   }
 }
 
-resource stagingApplicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: '${applicationInsightsName}-staging'
+resource stagingAppInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: '${webAppName}-staging'
   location: location
   kind: 'web'
   properties: {
@@ -143,9 +147,101 @@ resource stagingAppSettings 'Microsoft.Web/sites/slots/config@2023-12-01' = {
   name: 'appsettings'
   parent: deploymentSlot
   properties: {
-    APPLICATIONINSIGHTS_CONNECTION_STRING: stagingApplicationInsights.properties.ConnectionString
+    APPLICATIONINSIGHTS_CONNECTION_STRING: stagingAppInsights.properties.ConnectionString
     ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
     XDT_MicrosoftApplicationInsights_Mode: 'Recommended'
     WEBSITE_RUN_FROM_PACKAGE: '1'
+  }
+}
+
+resource apimAppInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: apimName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
+resource apimDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: apim
+  name: 'default'
+  properties: {
+    logs: [
+      {
+        category: 'GatewayLogs'
+        categoryGroup: null
+        enabled: true
+        retentionPolicy: {
+          days: 0
+          enabled: false
+        }
+      }
+      {
+        category: 'WebSocketConnectionLogs'
+        categoryGroup: null
+        enabled: true
+        retentionPolicy: {
+          days: 0
+          enabled: false
+        }
+      }
+    ]
+    metrics: [
+      {
+        enabled: false
+        retentionPolicy: {
+          days: 0
+          enabled: false
+        }
+        category: 'AllMetrics'
+      }
+    ]
+    workspaceId: logAnalyticsWorkspace.id
+    logAnalyticsDestinationType: 'Dedicated'
+  }
+}
+
+resource apim 'Microsoft.ApiManagement/service@2022-09-01-preview' = {
+  name: apimName
+  location: location
+  sku: {
+    name: apimTier
+    capacity: apimCapacity
+  }
+  zones: []
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    publisherName: apimOrganizationName
+    publisherEmail: apimAdminEmail
+  }
+  dependsOn: []
+}
+
+resource apimServiceLogger 'Microsoft.ApiManagement/service/loggers@2019-01-01' = {
+  parent: apim
+  name: apimAppInsights.name
+  properties: {
+    loggerType: 'applicationInsights'
+    resourceId: apimAppInsights.id
+    credentials: {
+      instrumentationKey: apimAppInsights.properties.InstrumentationKey
+    }
+  }
+}
+
+resource apimServiceDiagnostic 'Microsoft.ApiManagement/service/diagnostics@2019-01-01' = {
+  parent: apim
+  name: 'applicationinsights'
+  properties: {
+    loggerId: apimServiceLogger.id
+    alwaysLog: 'allErrors'
+    sampling: {
+      percentage: 100
+      samplingType: 'fixed'
+    }
   }
 }
