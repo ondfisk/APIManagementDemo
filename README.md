@@ -1,2 +1,1 @@
-# APIManagementDemo
-Azure API Management Demo
+# Azure API Management Demo

@@ -1,0 +1,45 @@
+---
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  build:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+
+      - name: Super-Linter
+        uses: super-linter/super-linter@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_CSHARP: false # temporary workaround for linter not supporting .NET 9
+          VALIDATE_DOTNET_SLN_FORMAT_ANALYZERS: false # temporary workaround for linter not supporting .NET 9
+          VALIDATE_DOTNET_SLN_FORMAT_STYLE: false # temporary workaround for linter not supporting .NET 9
+          VALIDATE_DOTNET_SLN_FORMAT_WHITESPACE: false # temporary workaround for linter not supporting .NET 9
+          VALIDATE_CSS: false
+          VALIDATE_CSS_PRETTIER: false
+          VALIDATE_JSCPD: false
+          VALIDATE_JSON_PRETTIER: false
