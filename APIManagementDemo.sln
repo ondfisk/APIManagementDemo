@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CE025BB4-DC00-4471-9C0A-77043238672C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIManagementDemo", "src\APIManagementDemo\APIManagementDemo.csproj", "{ABA70151-5D3F-4B90-91F7-A3DC554C0347}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "src\WebApi\WebApi.csproj", "{ABA70151-5D3F-4B90-91F7-A3DC554C0347}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4B5AA947-D7B8-495C-ABCE-AF7EDC117586}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIManagementDemo.Tests", "tests\APIManagementDemo.Tests\APIManagementDemo.Tests.csproj", "{2639FC91-AF61-40DA-9670-962AEB6636EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Tests", "tests\WebApi.Tests\WebApi.Tests.csproj", "{2639FC91-AF61-40DA-9670-962AEB6636EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

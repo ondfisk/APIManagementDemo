@@ -1,8 +1,3 @@
-using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.Resource;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,14 +15,9 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
 
+app.MapOpenApi();
 app.MapHealthChecks("/healthz");
 
 var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
@@ -56,7 +46,4 @@ app.MapGet("/weatherforecast", (HttpContext httpContext) =>
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+public partial class Program { }

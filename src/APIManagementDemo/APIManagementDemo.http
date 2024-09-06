@@ -1,6 +1,0 @@
-@APIManagementDemo_HostAddress = http://localhost:5234
-
-GET {{APIManagementDemo_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
