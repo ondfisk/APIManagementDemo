@@ -1,13 +1,19 @@
 param location string = resourceGroup().location
-param logAnalyticsWorkspaceName string
-param appServicePlanName string
-param webAppName string
-param apimName string
+param logAnalyticsWorkspaceName string = 'MyLogAnalyticsWorkspace'
+param appServicePlanName string = 'MyAppServicePlan'
+param webAppName string = 'web-${uniqueString(resourceGroup().id)}'
+param apimName string = 'api-${uniqueString(resourceGroup().id)}'
 param apimTier string = 'Developer'
 param apimCapacity int = 1
 param apimOrganizationName string
 param apimAdminEmail string
+param tenantId string = subscription().tenantId
+param clientId string
+param allowedOrigins string
+param scopes string
 
+var azureAdInstance = environment().authentication.loginEndpoint
+var callbackPath = '/signin-oidc'
 var deploymentSlotName = 'staging'
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
@@ -118,12 +124,12 @@ resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
     ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
     XDT_MicrosoftApplicationInsights_Mode: 'Recommended'
     WEBSITE_RUN_FROM_PACKAGE: '1'
-    AzureAd__Instance: environment().authentication.loginEndpoint
-    AzureAd__TenantId: 'b461d90e-0c15-44ec-adc2-51d14f9f5731'
-    AzureAd__ClientId: '2d2796ac-85a8-4885-b11a-6239e2963a1f'
-    AzureAd__CallbackPath: '/signin-oidc'
-    AzureAd__Scopes: 'Forecast.Read'
-    Cors__AllowedOrigins: 'https://localhost:7122'
+    AzureAd__Instance: azureAdInstance
+    AzureAd__TenantId: tenantId
+    AzureAd__ClientId: clientId
+    AzureAd__CallbackPath: callbackPath
+    AzureAd__Scopes: scopes
+    Cors__AllowedOrigins: allowedOrigins
   }
 }
 
@@ -157,12 +163,12 @@ resource stagingAppSettings 'Microsoft.Web/sites/slots/config@2023-12-01' = {
     ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
     XDT_MicrosoftApplicationInsights_Mode: 'Recommended'
     WEBSITE_RUN_FROM_PACKAGE: '1'
-    AzureAd__Instance: environment().authentication.loginEndpoint
-    AzureAd__TenantId: 'b461d90e-0c15-44ec-adc2-51d14f9f5731'
-    AzureAd__ClientId: '2d2796ac-85a8-4885-b11a-6239e2963a1f'
-    AzureAd__CallbackPath: '/signin-oidc'
-    AzureAd__Scopes: 'Forecast.Read'
-    Cors__AllowedOrigins: 'https://localhost:7122'
+    AzureAd__Instance: azureAdInstance
+    AzureAd__TenantId: tenantId
+    AzureAd__ClientId: clientId
+    AzureAd__CallbackPath: callbackPath
+    AzureAd__Scopes: scopes
+    Cors__AllowedOrigins: allowedOrigins
   }
 }
 
