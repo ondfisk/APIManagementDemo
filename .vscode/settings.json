@@ -17,6 +17,8 @@
         "appsettings",
         "healthz",
         "Msal",
-        "weatherforecast"
+        "weatherforecast",
+        "Rasmus",
+        "Lystrøm"
     ]
 }

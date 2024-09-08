@@ -35,9 +35,9 @@ Open API specification can be found at:
             <header>*</header>
         </allowed-headers>
     </cors>
-    <validate-azure-ad-token tenant-id="...">
+    <validate-azure-ad-token tenant-id="18f459d7-049e-4645-8567-d0c65eeef42e">
         <audiences>
-            <audience>api://...</audience>
+            <audience>api://edeb4634-c6d4-4f6a-b1df-50706208711c</audience>
         </audiences>
     </validate-azure-ad-token>
 </inbound>
