@@ -118,6 +118,12 @@ resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
     ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
     XDT_MicrosoftApplicationInsights_Mode: 'Recommended'
     WEBSITE_RUN_FROM_PACKAGE: '1'
+    AzureAd__Instance: environment().authentication.loginEndpoint
+    AzureAd__TenantId: subscription().tenantId
+    AzureAd__ClientId: '2d2796ac-85a8-4885-b11a-6239e2963a1f'
+    AzureAd__CallbackPath: '/signin-oidc'
+    AzureAd__Scopes: 'Forecast.Read'
+    Cors__AllowedOrigins: 'https://localhost:7122'
   }
 }
 

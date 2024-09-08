@@ -1,3 +1,5 @@
+var myAllowSpecificOrigins = "MyAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,17 +12,30 @@ if (!builder.Environment.IsDevelopment())
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
 
+builder.Services.AddCors(options =>
+{
+    var origins = builder.Configuration["Cors:AllowedOrigins"]?.Split(',') ?? [];
+    Console.WriteLine($"CORS origins: {string.Join(", ", origins)}");
+
+    options.AddPolicy(name: myAllowSpecificOrigins,
+                      policy  =>
+                      {
+                          policy.WithOrigins(origins).AllowAnyMethod().AllowAnyHeader();
+                      });
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseCors(myAllowSpecificOrigins);
 
 app.MapOpenApi();
 app.MapHealthChecks("/healthz");
 
-var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
+var scopes = builder.Configuration["AzureAd:Scopes"]?.Split(',') ?? [];
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -28,7 +43,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", (HttpContext httpContext) =>
 {
-    httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+    httpContext.VerifyUserHasAnyAcceptedScope(scopes);
 
     var forecast =  Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast

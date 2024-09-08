@@ -1,4 +1,4 @@
-namespace WebApi;
+namespace Backend;
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

@@ -1,4 +1,4 @@
-﻿namespace WebApi.Tests;
+﻿namespace Backend.Tests;
 
 public class WeatherTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
