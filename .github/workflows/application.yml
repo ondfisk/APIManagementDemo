@@ -84,13 +84,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Get Connection String
-        uses: azure/cli@v2
-        with:
-          azcliversion: 2.63.0
-          inlineScript: |
-            echo "CONNECTION_STRING=$(az webapp config connection-string list --resource-group ${{ vars.RESOURCE_GROUP }} --name ${{ vars.WEBAPP }} --slot ${{ vars.DEPLOYMENT_SLOT }} --query [].value --output tsv)" >> "$GITHUB_ENV"
-
       - name: Deploy Web App
         uses: azure/cli@v2
         with:

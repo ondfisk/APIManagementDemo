@@ -9,6 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var downstreamApi = builder.Configuration["DownstreamApi:BaseUrl"] ?? throw new InvalidOperationException("DownstreamApi BaseUrl is missing");
 var scopes = builder.Configuration["DownstreamApi:Scopes"] ?? throw new InvalidOperationException("DownstreamApi Scopes are missing");
+var subscriptionKey = builder.Configuration["DownstreamApi:SubscriptionKey"] ?? throw new InvalidOperationException("DownstreamApi SubscriptionKey is missing");
 
 builder.Services.AddScoped(sp =>
 {
@@ -17,10 +18,12 @@ builder.Services.AddScoped(sp =>
     authorizationMessageHandler = authorizationMessageHandler.ConfigureHandler(
         authorizedUrls: [downstreamApi],
         scopes: scopes.Split(','));
-    return new HttpClient(authorizationMessageHandler)
+    var client = new HttpClient(authorizationMessageHandler)
     {
-        BaseAddress = new Uri(downstreamApi)
+        BaseAddress = new Uri(downstreamApi),
     };
+    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+    return client;
 });
 
 builder.Services.AddMsalAuthentication(options =>
