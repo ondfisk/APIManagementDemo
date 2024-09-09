@@ -15,7 +15,6 @@ if (!builder.Environment.IsDevelopment())
 builder.Services.AddCors(options =>
 {
     var origins = builder.Configuration["Cors:AllowedOrigins"]?.Split(',') ?? [];
-    Console.WriteLine($"CORS origins: {string.Join(", ", origins)}");
 
     options.AddPolicy(name: myAllowSpecificOrigins,
                       policy  =>
@@ -56,6 +55,16 @@ app.MapGet("/weatherforecast", (HttpContext httpContext) =>
     return forecast;
 })
 .WithName("GetWeatherForecast")
+.WithOpenApi()
+.RequireAuthorization();
+
+app.MapGet("/claims", (HttpContext httpContext) =>
+{
+    httpContext.VerifyUserHasAnyAcceptedScope(scopes);
+
+    return httpContext.User.Claims.Select(c => new { c.Type, c.Value });
+})
+.WithName("GetClaims")
 .WithOpenApi()
 .RequireAuthorization();
 
