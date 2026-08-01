@@ -12,13 +12,5 @@
     "editor.trimAutoWhitespace": true,
     "files.autoSave": "afterDelay",
     "files.trimFinalNewlines": true,
-    "files.trimTrailingWhitespace": true,
-    "cSpell.ignoreWords": [
-        "appsettings",
-        "healthz",
-        "Msal",
-        "weatherforecast",
-        "Rasmus",
-        "Lystrøm"
-    ]
+    "files.trimTrailingWhitespace": true
 }

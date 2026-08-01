@@ -16,7 +16,7 @@ var azureAdInstance = environment().authentication.loginEndpoint
 var callbackPath = '/signin-oidc'
 var deploymentSlotName = 'staging'
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2025-03-01' = {
   name: appServicePlanName
   kind: 'linux'
   location: location
@@ -29,7 +29,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   }
 }
 
-resource webApp 'Microsoft.Web/sites@2023-12-01' = {
+resource webApp 'Microsoft.Web/sites@2025-03-01' = {
   name: webAppName
   location: location
   kind: 'app,linux'
@@ -41,7 +41,7 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
     reserved: true
     hyperV: false
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|9.0'
+      linuxFxVersion: 'DOTNETCORE|10.0'
       alwaysOn: true
       http20Enabled: true
       minTlsVersion: '1.2'
@@ -56,7 +56,7 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 
-resource deploymentSlot 'Microsoft.Web/sites/slots@2023-12-01' = {
+resource deploymentSlot 'Microsoft.Web/sites/slots@2025-03-01' = {
   name: deploymentSlotName
   parent: webApp
   location: location
@@ -69,7 +69,7 @@ resource deploymentSlot 'Microsoft.Web/sites/slots@2023-12-01' = {
     reserved: true
     hyperV: false
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|9.0'
+      linuxFxVersion: 'DOTNETCORE|10.0'
       alwaysOn: true
       http20Enabled: true
       minTlsVersion: '1.2'
@@ -84,7 +84,7 @@ resource deploymentSlot 'Microsoft.Web/sites/slots@2023-12-01' = {
   }
 }
 
-resource webAppBasicPublishingCredentialsFtp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+resource webAppBasicPublishingCredentialsFtp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2025-03-01' = {
   name: 'ftp'
   parent: webApp
   properties: {
@@ -92,7 +92,7 @@ resource webAppBasicPublishingCredentialsFtp 'Microsoft.Web/sites/basicPublishin
   }
 }
 
-resource slotBasicPublishingCredentialsFtp 'Microsoft.Web/sites/slots/basicPublishingCredentialsPolicies@2023-12-01' = {
+resource slotBasicPublishingCredentialsFtp 'Microsoft.Web/sites/slots/basicPublishingCredentialsPolicies@2025-03-01' = {
   name: 'ftp'
   parent: deploymentSlot
   properties: {
@@ -100,7 +100,7 @@ resource slotBasicPublishingCredentialsFtp 'Microsoft.Web/sites/slots/basicPubli
   }
 }
 
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
   name: logAnalyticsWorkspaceName
   location: location
   properties: {}
@@ -116,7 +116,7 @@ resource webAppInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
+resource appSettings 'Microsoft.Web/sites/config@2025-03-01' = {
   name: 'appsettings'
   parent: webApp
   properties: {
@@ -133,7 +133,7 @@ resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
   }
 }
 
-resource slotConfigNames 'Microsoft.Web/sites/config@2022-09-01' = {
+resource slotConfigNames 'Microsoft.Web/sites/config@2025-03-01' = {
   name: 'slotConfigNames'
   parent: webApp
   properties: {
@@ -155,7 +155,7 @@ resource stagingAppInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-resource stagingAppSettings 'Microsoft.Web/sites/slots/config@2023-12-01' = {
+resource stagingAppSettings 'Microsoft.Web/sites/slots/config@2025-03-01' = {
   name: 'appsettings'
   parent: deploymentSlot
   properties: {
@@ -221,7 +221,7 @@ resource apimDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-0
   }
 }
 
-resource apim 'Microsoft.ApiManagement/service@2022-09-01-preview' = {
+resource apim 'Microsoft.ApiManagement/service@2024-05-01' = {
   name: apimName
   location: location
   sku: {
@@ -239,7 +239,7 @@ resource apim 'Microsoft.ApiManagement/service@2022-09-01-preview' = {
   dependsOn: []
 }
 
-resource apimServiceLogger 'Microsoft.ApiManagement/service/loggers@2019-01-01' = {
+resource apimServiceLogger 'Microsoft.ApiManagement/service/loggers@2024-05-01' = {
   parent: apim
   name: apimAppInsights.name
   properties: {
@@ -251,7 +251,7 @@ resource apimServiceLogger 'Microsoft.ApiManagement/service/loggers@2019-01-01' 
   }
 }
 
-resource apimServiceDiagnostic 'Microsoft.ApiManagement/service/diagnostics@2019-01-01' = {
+resource apimServiceDiagnostic 'Microsoft.ApiManagement/service/diagnostics@2024-05-01' = {
   parent: apim
   name: 'applicationinsights'
   properties: {
