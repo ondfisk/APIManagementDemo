@@ -14,8 +14,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <!-- Required for .NET 10: Microsoft.OpenApi must stay below 3.0 -->
     <PackageReference Include="Microsoft.OpenApi" Version="3.11.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="4.16.1" />
-    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="4.16.1" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.18.0" />
+    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="4.18.0" />
   </ItemGroup>
 
 </Project>
